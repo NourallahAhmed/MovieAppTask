@@ -6,10 +6,4 @@
 //
 
 import Foundation
-enum MovieAPIs{
-    case movieList
-    case movieDetails
-}
-extension  MovieAPIs {
-    
-}
+import Moya
