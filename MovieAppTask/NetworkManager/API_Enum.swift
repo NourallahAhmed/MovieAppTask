@@ -6,11 +6,14 @@
 //
 
 import Foundation
+import Moya
 
 enum MovieAPIs{
     case movieList
     case movieDetails(id: String)
 }
+
+
 extension  MovieAPIs : Moya.TargetType{
     var baseURL: URL {
         switch self {
