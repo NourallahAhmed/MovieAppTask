@@ -115,8 +115,6 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
 }
 
 
-
-
 struct MovieListRepresenter : UIViewControllerRepresentable {
     typealias UIViewControllerType = MovieListVC
 
