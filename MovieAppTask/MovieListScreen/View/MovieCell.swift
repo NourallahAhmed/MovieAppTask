@@ -19,9 +19,11 @@ class MovieCell : UITableViewCell {
     
     private let movieImage : UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "tv"))
-        
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+
         imageView.contentMode = .scaleAspectFit
-        
+        imageView.layer.cornerRadius = 20
+
         imageView.clipsToBounds = true
         
         return imageView
@@ -30,6 +32,7 @@ class MovieCell : UITableViewCell {
     
     private let movieNameLB : UILabel = {
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.boldSystemFont(ofSize: 16)
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
@@ -39,10 +42,11 @@ class MovieCell : UITableViewCell {
         return label
     }()
     
-    
     private let movieDateLB : UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
+        label.translatesAutoresizingMaskIntoConstraints = false
+
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
@@ -51,9 +55,19 @@ class MovieCell : UITableViewCell {
         return label
     }()
     
+    private let customBackgroundView : UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.layer.cornerRadius = 25
+        view.clipsToBounds = true
+        view.backgroundColor = .lightGray.withAlphaComponent(0.8)
+        return view
+    }()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+
         setUpView()
     }
     
@@ -63,29 +77,34 @@ class MovieCell : UITableViewCell {
     
     
     func setUpView(){
-        addSubview(movieImage)
-        addSubview(movieNameLB)
-        addSubview(movieDateLB)
-        movieImage.translatesAutoresizingMaskIntoConstraints = false
-        movieNameLB.translatesAutoresizingMaskIntoConstraints = false
-        movieDateLB.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(customBackgroundView)
+
+        customBackgroundView.addSubview(movieImage)
+        customBackgroundView.addSubview(movieNameLB)
+        customBackgroundView.addSubview(movieDateLB)
+       
         NSLayoutConstraint.activate([
-            movieImage.topAnchor.constraint(equalTo: topAnchor, constant: 8),
-            movieImage.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            movieImage.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
-            movieImage.widthAnchor.constraint(equalToConstant: 80),
             
-            movieNameLB.topAnchor.constraint(equalTo: topAnchor, constant: 16),
-            movieNameLB.trailingAnchor.constraint(equalTo: trailingAnchor,constant: -16),
+            customBackgroundView.topAnchor.constraint(equalTo: topAnchor , constant:  28),
+            customBackgroundView.leadingAnchor.constraint(equalTo: leadingAnchor , constant:  28),
+            customBackgroundView.trailingAnchor.constraint(equalTo: trailingAnchor , constant:  -28),
+            customBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor , constant:  -16),
+            
+            
+            movieImage.topAnchor.constraint(equalTo: customBackgroundView.topAnchor, constant: 8),
+            movieImage.leadingAnchor.constraint(equalTo: customBackgroundView.leadingAnchor, constant: 16),
+            movieImage.bottomAnchor.constraint(equalTo: customBackgroundView.bottomAnchor, constant: -16),
+            movieImage.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3),
+            
+            movieNameLB.topAnchor.constraint(equalTo: customBackgroundView.topAnchor, constant: 16),
+            movieNameLB.trailingAnchor.constraint(equalTo: customBackgroundView.trailingAnchor,constant: -16),
             movieNameLB.leadingAnchor.constraint(equalTo: movieImage.trailingAnchor,constant: 16),
-            movieNameLB.heightAnchor.constraint(equalToConstant: 45),
+            movieNameLB.heightAnchor.constraint(equalToConstant: 20),
             
             
             movieDateLB.topAnchor.constraint(equalTo: movieNameLB.bottomAnchor, constant: 8),
             movieDateLB.leadingAnchor.constraint(equalTo: movieImage.trailingAnchor,constant: 16),
-            movieDateLB.heightAnchor.constraint(equalToConstant: 45),
-
-            
+            movieDateLB.heightAnchor.constraint(equalToConstant: 20),
         
         ])
     }

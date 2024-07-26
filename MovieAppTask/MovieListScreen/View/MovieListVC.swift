@@ -17,7 +17,8 @@ class MovieListVC : UIViewController {
         
         let table = UITableView()
         table.translatesAutoresizingMaskIntoConstraints = false
-
+        table.separatorStyle = .none
+        
         // set the delegates
         table.delegate = self
         table.dataSource = self
@@ -26,7 +27,7 @@ class MovieListVC : UIViewController {
         table.register( MovieCell.self , forCellReuseIdentifier: appConstants.cellIdentifier.rawValue)
         return table
     }()
-    private  var cancelable: Set<AnyCancellable> = Set<AnyCancellable>() // 3
+    private  var cancelable: Set<AnyCancellable> = Set<AnyCancellable>()
 
     var vm : MovieListViewModel?
     init(vm: MovieListViewModel? = nil) {
@@ -82,8 +83,9 @@ class MovieListVC : UIViewController {
 
 extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return UIScreen.main.bounds.height / 4
     }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return vm?.movieList.count ?? 10
     }
@@ -98,7 +100,17 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
         cell.configureMovie(movie: vm?.movieList[indexPath.row])
         return cell
     }
+ 
     
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        if decelerate {
+            if vm?.hasMoreData == true && vm?.loadingCompleted == true {
+                addTableViewFooter(tableView: self.movieTV)
+                vm?.fetchMovies()
+            }
+        }
+    }    
+ 
     
 }
 

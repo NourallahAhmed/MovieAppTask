@@ -18,6 +18,8 @@ class MovieListViewModel : MovieListViewModelProtocol {
     
     @Published private(set) var movieList : [MovieModel]  = [MovieModel]()
     @Published private(set) var loadingCompleted   = false
+    @Published private(set) var hasMoreData   = false
+    private var nextPage = 1
     private var netwotkManager : NetworkManagerProtocol?
     private var anyCancelable = Set<AnyCancellable>()
     
@@ -33,7 +35,7 @@ class MovieListViewModel : MovieListViewModelProtocol {
     func fetchMovies() {
         DispatchQueue.global().async { [weak self] in
             guard let  self = self else { return}
-            self.netwotkManager?.fetchMovieList(.movieList).sink { [weak self] completion in
+            self.netwotkManager?.fetchMovieList(.movieList , page: nextPage).sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     self?.loadingCompleted = true
@@ -41,8 +43,14 @@ class MovieListViewModel : MovieListViewModelProtocol {
                     print("error = \(error)")
 
                 }
-            } receiveValue: { [weak self] reponse in
-                self?.movieList = reponse.results
+            } receiveValue: { [weak self] response in
+                if response.page < response.totalPages {
+                    self?.hasMoreData = true
+                    self?.nextPage = response.page + 1
+                }
+                self?.movieList.append(contentsOf: response.results )
+                
+                
             }.store(in: &anyCancelable)
 
         }
