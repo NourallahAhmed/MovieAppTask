@@ -6,12 +6,10 @@
 //
 
 import Foundation
-import Moya
 import Combine
 
 
 enum ErrorHandler : Error {
-    
     case badGateWay
     case someThingWentWrong
     case invalidResponse
@@ -31,10 +29,7 @@ class NetworkManager {
     public  static var shared : NetworkManager {
         return instance
     }
-    
-    
-    private var provider = MoyaProvider<MovieAPIs>()
-    
+        
     private var anyCancellable = Set<AnyCancellable>()
         
 }
@@ -42,17 +37,16 @@ class NetworkManager {
 extension NetworkManager : NetworkManagerProtocol {
     func fetchMovieList(_ endPoint: MovieAPIs , page: Int) -> AnyPublisher<MovieListResponseModel, Error> {
         let url = "\(appConstants.baseURL.rawValue)\(appConstants.movieListEndPoint.rawValue)?api_key=\(appConstants.apiKey.rawValue)"
-//        let url = "https://api.themoviedb.org/3/discover/movie?api_key=7d90f9a3023dd78ccdf548ec38d982b8"
 
         var components = URLComponents(url: URL(string: url)! , resolvingAgainstBaseURL: true)!
         let queryItems: [URLQueryItem] = [
-          URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "page", value: "\(page)"),
         ]
         components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
 
-        let request = try? URLRequest(url: components.url!)
+        let request = URLRequest(url: components.url!)
 
-        return URLSession.shared.dataTaskPublisher(for: request!)
+        return URLSession.shared.dataTaskPublisher(for: request)
             .subscribe(on: DispatchQueue.global(qos: .background))
             .map(\.data)
             .decode(type: MovieListResponseModel.self, decoder: JSONDecoder())

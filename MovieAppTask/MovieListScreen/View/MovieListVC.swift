@@ -11,7 +11,7 @@ import SwiftUI
 import Combine
 
 
-class MovieListVC : UIViewController {
+class MovieListVC : BaseViewController {
     
     private lazy var movieTV : UITableView  = {
         
@@ -54,6 +54,7 @@ class MovieListVC : UIViewController {
             }
             }).store(in: &cancelable)
     }
+    
     func updateUI(){
         movieTV.reloadData()
     }
@@ -61,7 +62,6 @@ class MovieListVC : UIViewController {
     func setUpTableView(){
         
         
-        view.backgroundColor = .blue
         // add to view
         view.addSubview(movieTV)
         

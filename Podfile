@@ -9,6 +9,8 @@ target 'MovieAppTask' do
 
    pod 'Moya/Combine', '~> 15.0'
    pod 'Kingfisher', '~> 7.0'
+   pod 'SwiftMessages'
+
 
   # Pods for MovieAppTask
 
