@@ -24,13 +24,13 @@ class MovieListVC : BaseViewController {
         table.dataSource = self
         
         // configure the cell
-        table.register( MovieCell.self , forCellReuseIdentifier: appConstants.cellIdentifier.rawValue)
+        table.register( MovieCell.self , forCellReuseIdentifier: appConstants.movieListCellIdentifier.rawValue)
         return table
     }()
     private  var cancelable: Set<AnyCancellable> = Set<AnyCancellable>()
 
-    var vm : MovieListViewModel?
-    init(vm: MovieListViewModel? = nil) {
+    var vm : MovieListViewModel
+    init(vm: MovieListViewModel){
         self.vm = vm
         super.init(nibName: nil, bundle: nil)
     }
@@ -46,7 +46,7 @@ class MovieListVC : BaseViewController {
     }
     
     func subscribeToLoading(){
-        vm?.$loadingCompleted
+        vm.$loadingCompleted
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self] completed in
             if completed {
@@ -61,21 +61,15 @@ class MovieListVC : BaseViewController {
     
     func setUpTableView(){
         
-        
-        // add to view
         view.addSubview(movieTV)
         
         NSLayoutConstraint.activate([
-            movieTV.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            movieTV.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            movieTV.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            movieTV.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            movieTV.topAnchor.constraint(equalTo: view.topAnchor),
+            movieTV.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            movieTV.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            movieTV.trailingAnchor.constraint(equalTo: view.trailingAnchor),
         ])
-        
-        
-  
-        
-       
+               
     }
     
     
@@ -87,26 +81,33 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return vm?.movieList.count ?? 10
+        return vm.movieList.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: appConstants.cellIdentifier.rawValue, for: indexPath) as? MovieCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: appConstants.movieListCellIdentifier.rawValue, for: indexPath) as? MovieCell else {
 
             return UITableViewCell()
 
         }
         
-        cell.configureMovie(movie: vm?.movieList[indexPath.row])
+        cell.configureMovie(movie: vm.movieList[indexPath.row])
         return cell
     }
  
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.navigationController?.pushViewController(
+            MovieDetailsScreen(
+                vm: MovieDetailsViewModel(
+                    movieID:vm.movieList[indexPath.row].id ?? 1022789)),
+                            animated: true)
+    }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         if decelerate {
-            if vm?.hasMoreData == true && vm?.loadingCompleted == true {
+            if vm.hasMoreData == true && vm.loadingCompleted == true {
                 addTableViewFooter(tableView: self.movieTV)
-                vm?.fetchMovies()
+                vm.fetchMovies()
             }
         }
     }    

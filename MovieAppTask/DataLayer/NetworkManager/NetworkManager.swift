@@ -19,7 +19,7 @@ enum ErrorHandler : Error {
 protocol NetworkManagerProtocol {
     
     func fetchMovieList(_ endPoint: MovieAPIs , page: Int ) -> AnyPublisher<MovieListResponseModel, Error>
-//    func fetchMovieDetails(movieId: String) -> AnyPublisher<MovieModel , MoyaError>
+    func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieModel , Error>
 }
 
 class NetworkManager {
@@ -56,9 +56,20 @@ extension NetworkManager : NetworkManagerProtocol {
     
     }
     
-//    func fetchMovieDetails(movieId: String) -> AnyPublisher<MovieModel, MoyaError> {
-//        //TODO:
-//    }
+    func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieModel, Error> {
+        let url = "\(appConstants.baseURL.rawValue)\(appConstants.movieDetailsEndPoint.rawValue)\(movieId)?api_key=\(appConstants.apiKey.rawValue)"
+        print("URL = \(url)")
+        var components = URLComponents(url: URL(string: url)! , resolvingAgainstBaseURL: true)!
+
+        let request = URLRequest(url: components.url!)
+        
+        return URLSession.shared.dataTaskPublisher(for: request)
+            .subscribe(on: DispatchQueue.global(qos: .background))
+            .map(\.data)
+            .decode(type: MovieModel.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
     
     
 }

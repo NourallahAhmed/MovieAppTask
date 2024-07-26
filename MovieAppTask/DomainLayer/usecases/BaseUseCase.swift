@@ -11,5 +11,5 @@ protocol BaseUseCase {
     associatedtype InputType
     
     // Define a method that takes input and returns a response
-    func execute(input: InputType, completion: @escaping (ResponseType? , String ) -> Void)
+    func execute(input: InputType) -> ResponseType
 }

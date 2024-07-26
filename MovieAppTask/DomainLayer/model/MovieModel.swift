@@ -9,7 +9,7 @@ import Foundation
 struct MovieModel : Codable {
     let adult : Bool?
     let backdrop_path : String?
-    let genre_ids : [Int]?
+    let genre_ids : [Genres]?
     let id : Int?
     let original_language : String?
     let original_title : String?
@@ -26,7 +26,7 @@ struct MovieModel : Codable {
 
         case adult = "adult"
         case backdrop_path = "backdrop_path"
-        case genre_ids = "genre_ids"
+        case genre_ids = "genres"
         case id = "id"
         case original_language = "original_language"
         case original_title = "original_title"
@@ -44,7 +44,7 @@ struct MovieModel : Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         adult = try values.decodeIfPresent(Bool.self, forKey: .adult)
         backdrop_path = try values.decodeIfPresent(String.self, forKey: .backdrop_path)
-        genre_ids = try values.decodeIfPresent([Int].self, forKey: .genre_ids)
+        genre_ids = try values.decodeIfPresent([Genres].self, forKey: .genre_ids)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
         original_language = try values.decodeIfPresent(String.self, forKey: .original_language)
         original_title = try values.decodeIfPresent(String.self, forKey: .original_title)
@@ -58,4 +58,14 @@ struct MovieModel : Codable {
         vote_count = try values.decodeIfPresent(Int.self, forKey: .vote_count)
     }
 
+}
+struct Genres : Codable {
+    let id : Int?
+    let name : String?
+
+    enum CodingKeys: String, CodingKey {
+        
+        case id = "id"
+        case name = "name"
+    }
 }

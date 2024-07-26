@@ -7,7 +7,8 @@
 
 import Foundation
 enum appConstants : String {
-    case cellIdentifier = "MovieCell"
+    case movieListCellIdentifier = "MovieCell"
+    case genresCelldentifier = "GenresCollectionCell"
     case baseURL = "https://api.themoviedb.org/3/"
     case movieListEndPoint = "discover/movie"
     case movieDetailsEndPoint = "movie/"
