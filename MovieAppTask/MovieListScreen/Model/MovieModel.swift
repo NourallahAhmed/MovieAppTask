@@ -9,7 +9,7 @@ import Foundation
 struct MovieModel : Codable {
     let adult : Bool?
     let backdrop_path : String?
-    let genre_ids : [String]?
+    let genre_ids : [Int]?
     let id : Int?
     let original_language : String?
     let original_title : String?
@@ -44,7 +44,7 @@ struct MovieModel : Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         adult = try values.decodeIfPresent(Bool.self, forKey: .adult)
         backdrop_path = try values.decodeIfPresent(String.self, forKey: .backdrop_path)
-        genre_ids = try values.decodeIfPresent([String].self, forKey: .genre_ids)
+        genre_ids = try values.decodeIfPresent([Int].self, forKey: .genre_ids)
         id = try values.decodeIfPresent(Int.self, forKey: .id)
         original_language = try values.decodeIfPresent(String.self, forKey: .original_language)
         original_title = try values.decodeIfPresent(String.self, forKey: .original_title)

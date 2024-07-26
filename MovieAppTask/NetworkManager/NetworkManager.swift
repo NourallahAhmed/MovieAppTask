@@ -10,17 +10,17 @@ import Moya
 import Combine
 
 
-//enum ErrorHandler : MoyaError {
-//    typealias RawValue = <#type#>
-//    
-//    case badGateWay
-//    case someThingWentWrong
-//}
+enum ErrorHandler : Error {
+    
+    case badGateWay
+    case someThingWentWrong
+    case invalidResponse
+}
 
 
 protocol NetworkManagerProtocol {
     
-    func fetchMovieList() -> AnyPublisher< MovieListResponseModel , MoyaError>
+    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, Error>
 //    func fetchMovieDetails(movieId: String) -> AnyPublisher<MovieModel , MoyaError>
 }
 
@@ -40,41 +40,41 @@ class NetworkManager {
 }
 
 extension NetworkManager : NetworkManagerProtocol {
-    func fetchMovieList() -> AnyPublisher<MovieListResponseModel, MoyaError> {
+    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, Error> {
+        let url = "https://api.themoviedb.org/3/discover/movie?api_key=7d90f9a3023dd78ccdf548ec38d982b8"//endPoint.baseURL.appendingPathComponent(endPoint.path)
+       
+        var request = try? URLRequest(url: url, method: .get)
+        request?.addValue( appConstants.apiKey.rawValue , forHTTPHeaderField: "api_key")
+        endPoint.headers?.forEach { request?.addValue($0.value, forHTTPHeaderField: $0.key) }
         
-        Future<MovieListResponseModel, MoyaError> { [weak self] promise in
-            
-            guard let self  else { return }
-            
-            self.provider.requestPublisher(.movieList, callbackQueue: .global())
-                .sink ( receiveCompletion: { completion in
-                    switch completion{
-                    case .finished:
-//                        promise(.success(MovieListResponseModel()))
-                        print("Finished")
-                    case .failure(let error):
-                        print("error")
-
-                        promise(.failure(error))
-                    }
-                }, receiveValue: { response in
-                    
-                    print("response = \(response.data)")
-                    print("response = \(response.statusCode)")
-                    print("response = \(response.response)")
-                    print("response = \(response.debugDescription)")
-                   guard let result = try? JSONDecoder().decode(MovieListResponseModel.self, from: response.data)
-                    else {
-                       promise (.failure(MoyaError.jsonMapping(response)))
-                       return
-                   }
-                    
-                    
-                    promise(.success(result))
-                }
-            ).store(in: &anyCancellable)
-            
-        }.eraseToAnyPublisher()
+        print("URL + \(request?.url)")
+        return URLSession.shared.dataTaskPublisher(for: request!)
+            .subscribe(on: DispatchQueue.global(qos: .background))
+            .map(\.data)
+            .decode(type: MovieListResponseModel.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+        
+        
+//        return Future<MovieListResponseModel, MoyaError> { [weak self] promise in
+//            
+//            guard let self  else { return }
+//            self.provider.requestPublisher(.movieList).sink { completion in
+//                                    switch completion{
+//                                        
+//                                    case .finished:
+//                                        print("Finished2")
+//                                    case .failure(let error):
+//                                        print("error")
+//                
+//                                        promise(.failure(error))
+//                                    }
+//            } receiveValue: { response in
+//                print("response = \(response.data.debugDescription)")
+//                print("response = \(response.statusCode)")
+//         
+//            }.store(in: &anyCancellable)
+//        }.eraseToAnyPublisher()
 
     }
     

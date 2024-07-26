@@ -8,6 +8,7 @@ target 'MovieAppTask' do
    pod 'Moya', '~> 15.0'
 
    pod 'Moya/Combine', '~> 15.0'
+   pod 'Kingfisher', '~> 7.0'
 
   # Pods for MovieAppTask
 

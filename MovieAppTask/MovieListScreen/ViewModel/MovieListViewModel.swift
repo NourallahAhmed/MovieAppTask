@@ -16,7 +16,8 @@ protocol MovieListViewModelProtocol {
 
 class MovieListViewModel : MovieListViewModelProtocol {
     
-    @Published var movieList : [Movie]  = [Movie]()
+    @Published private(set) var movieList : [MovieModel]  = [MovieModel]()
+    @Published private(set) var loadingCompleted   = false
     private var netwotkManager : NetworkManagerProtocol?
     private var anyCancelable = Set<AnyCancellable>()
     
@@ -32,19 +33,20 @@ class MovieListViewModel : MovieListViewModelProtocol {
     func fetchMovies() {
         DispatchQueue.global().async { [weak self] in
             guard let  self = self else { return}
-            self.netwotkManager?.fetchMovieList().sink { completion in
+            self.netwotkManager?.fetchMovieList(.movieList).sink { [weak self] completion in
                 switch completion {
                 case .finished:
-                    print("Finished")
+                    self?.loadingCompleted = true
                 case .failure(let error):
                     print("error = \(error)")
 
                 }
-            } receiveValue: { reponse in
-                self.movieList = reponse.results
-                print("movieList= \(reponse)")
+            } receiveValue: { [weak self] reponse in
+                self?.movieList = reponse.results
             }.store(in: &anyCancelable)
 
         }
     }
 }
+
+

@@ -7,11 +7,12 @@
 
 import Foundation
 import UIKit
+import Kingfisher
 
 
 
 protocol MovieCellProtocol {
-    func configureMovie(movie: MovieModel)
+    func configureMovie(movie: MovieModel?)
 }
 
 class MovieCell : UITableViewCell {
@@ -91,7 +92,10 @@ class MovieCell : UITableViewCell {
 }
 
 extension MovieCell : MovieCellProtocol{
-    func configureMovie(movie: MovieModel) {
+    func configureMovie(movie: MovieModel?) {
+        guard let movie = movie else {return }
         self.movieNameLB.text = movie.original_title
+        self.movieDateLB.text = movie.release_date
+        self.movieImage.kf.setImage(with: URL(string:"\(appConstants.baseURLForImages.rawValue)\(movie.poster_path!)"))
     }
 }

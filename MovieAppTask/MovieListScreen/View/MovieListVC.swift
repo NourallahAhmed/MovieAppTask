@@ -7,18 +7,29 @@
 
 import Foundation
 import UIKit
+import SwiftUI
+import Combine
 
 
 class MovieListVC : UIViewController {
     
-    private var movieTV : UITableView  = {
+    private lazy var movieTV : UITableView  = {
         
         let table = UITableView()
+        table.translatesAutoresizingMaskIntoConstraints = false
+
+        // set the delegates
+        table.delegate = self
+        table.dataSource = self
+        
+        // configure the cell
+        table.register( MovieCell.self , forCellReuseIdentifier: appConstants.cellIdentifier.rawValue)
         return table
     }()
+    private  var cancelable: Set<AnyCancellable> = Set<AnyCancellable>() // 3
 
-    var vm : MovieListViewModelProtocol?
-    init(vm: MovieListViewModelProtocol? = nil) {
+    var vm : MovieListViewModel?
+    init(vm: MovieListViewModel? = nil) {
         self.vm = vm
         super.init(nibName: nil, bundle: nil)
     }
@@ -29,29 +40,41 @@ class MovieListVC : UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureTableView()
+        setUpTableView()
+        subscribeToLoading()
     }
-    func configureTableView(){
+    
+    func subscribeToLoading(){
+        vm?.$loadingCompleted
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: {[weak self] completed in
+            if completed {
+                self?.updateUI()
+            }
+            }).store(in: &cancelable)
+    }
+    func updateUI(){
+        movieTV.reloadData()
+    }
+    
+    func setUpTableView(){
         
         
         view.backgroundColor = .blue
         // add to view
         view.addSubview(movieTV)
         
-        movieTV.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             movieTV.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             movieTV.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             movieTV.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             movieTV.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
         ])
-        // set the delegates
-        movieTV.delegate = self
-        movieTV.dataSource = self
         
-        // configure the cell
-        movieTV.register( MovieCell.self , forCellReuseIdentifier: appConstants.cellIdentifier.rawValue)
-        movieTV.reloadData()
+        
+  
+        
+       
     }
     
     
@@ -62,20 +85,40 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
         return 100
     }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return vm?.movieList.count ?? 10
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: appConstants.cellIdentifier.rawValue, for: indexPath) as? MovieCell else {
-            print("UITableViewCell")
+
             return UITableViewCell()
 
         }
-        print("Cell")
-
         
+        cell.configureMovie(movie: vm?.movieList[indexPath.row])
         return cell
     }
     
     
+}
+
+
+
+
+struct MovieListRepresenter : UIViewControllerRepresentable {
+    typealias UIViewControllerType = MovieListVC
+
+    func updateUIViewController(_ uiViewController: MovieListVC, context: Context) {
+        
+    }
+        
+    func makeUIViewController(context: Context) -> MovieListVC {
+        MovieListVC(vm: MovieListViewModel())
+    }
+    
+    
+}
+
+#Preview{
+    MovieListRepresenter()
 }
