@@ -222,6 +222,7 @@
 		9B3DE4BE2C53ED6F0002BEF3 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				9B36E8102C52FCD60075B5F8 /* MovieListResponseModel.swift */,
 				9B81538F2C5231DD0072283D /* MovieModel.swift */,
 			);
 			path = model;
@@ -340,7 +341,6 @@
 			children = (
 				9B8153952C5245AE0072283D /* NetworkManager.swift */,
 				9B8153972C524AF90072283D /* API_Enum.swift */,
-				9B36E8102C52FCD60075B5F8 /* MovieListResponseModel.swift */,
 				9B3DE4A52C53E6A50002BEF3 /* NetworkConnectivity.swift */,
 			);
 			path = NetworkManager;

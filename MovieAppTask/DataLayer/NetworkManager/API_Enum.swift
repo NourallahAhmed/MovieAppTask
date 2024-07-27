@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum MovieAPIs{
-    case movieList
+    case movieList(page: Int)
     case movieDetails(id: String)
 }
 
@@ -19,7 +19,7 @@ extension  MovieAPIs : Moya.TargetType{
         
         return URL(string:
                     appConstants.baseURL.rawValue)!
-            //https://api.themoviedb.org/3/movie/1022789?api_key=7d90f9a3023dd78ccdf548ec38d982b8
+     
         
     }
     
@@ -40,7 +40,13 @@ extension  MovieAPIs : Moya.TargetType{
     }
     var task: Moya.Task {
           switch self {
-            default:
+              
+          case .movieList(let page):
+              var params: [String: Any] = [:]
+              params["api_key"] = appConstants.apiKey.rawValue
+              params["page"] = "\(page)"
+              return .requestParameters(parameters: params, encoding: URLEncoding.default)
+          case .movieDetails(_):
 
               var params: [String: Any] = [:]
               params["api_key"] = appConstants.apiKey.rawValue

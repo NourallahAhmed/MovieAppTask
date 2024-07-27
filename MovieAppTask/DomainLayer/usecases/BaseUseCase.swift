@@ -9,7 +9,8 @@ import Foundation
 protocol BaseUseCase {
     associatedtype ResponseType
     associatedtype InputType
+    associatedtype NetworkManager
     
     // Define a method that takes input and returns a response
-    func execute(input: InputType) -> ResponseType
+    func execute(input: InputType , networkManager: NetworkManager) -> ResponseType
 }

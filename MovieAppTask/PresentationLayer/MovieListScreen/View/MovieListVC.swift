@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import Combine
-
+import Moya
 
 class MovieListVC : BaseViewController {
     
@@ -27,9 +27,12 @@ class MovieListVC : BaseViewController {
         table.register( MovieCell.self , forCellReuseIdentifier: appConstants.movieListCellIdentifier.rawValue)
         return table
     }()
+    
+    
     private  var cancelable: Set<AnyCancellable> = Set<AnyCancellable>()
 
     var vm : MovieListViewModel
+    
     init(vm: MovieListViewModel){
         self.vm = vm
         super.init(nibName: nil, bundle: nil)
@@ -99,7 +102,7 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
         self.navigationController?.pushViewController(
             MovieDetailsScreen(
                 vm: MovieDetailsViewModel(
-                    movieID:vm.movieList[indexPath.row].id ?? 1022789)),
+                    movieID:vm.movieList[indexPath.row].id ?? 1022789, fetchMovieUseCase: FetchMovieDetailsUseCase<AnyPublisher<MovieModel , Error>>())),
                             animated: true)
     }
     
@@ -124,7 +127,7 @@ struct MovieListRepresenter : UIViewControllerRepresentable {
     }
         
     func makeUIViewController(context: Context) -> MovieListVC {
-        MovieListVC(vm: MovieListViewModel())
+        MovieListVC(vm: MovieListViewModel(fetchMoviesUseCase: FetchMoviesUseCase<AnyPublisher<MovieListResponseModel , MoyaError>>()))
     }
     
     

@@ -212,7 +212,10 @@ struct MovieDetailsRepresenter : UIViewControllerRepresentable {
     }
         
     func makeUIViewController(context: Context) -> MovieDetailsScreen {
-        MovieDetailsScreen(vm: MovieDetailsViewModel(movieID: 1022789 ))
+        MovieDetailsScreen(vm:
+                            MovieDetailsViewModel(
+                                movieID: 1022789 ,
+                                fetchMovieUseCase: FetchMovieDetailsUseCase<AnyPublisher<MovieModel, Error>>() ))
     }
     
     

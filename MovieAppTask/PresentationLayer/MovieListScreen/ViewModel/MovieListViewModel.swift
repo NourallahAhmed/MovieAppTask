@@ -20,14 +20,15 @@ class MovieListViewModel : MovieListViewModelProtocol {
     @Published private(set) var loadingCompleted   = false
     @Published private(set) var hasMoreData   = false
     private var nextPage = 1
-    private var netwotkManager : NetworkManagerProtocol?
+    private var fetchMovieListUseCase : FetchMoviesUseCase<AnyPublisher<MovieListResponseModel, MoyaError>>
+
     private var anyCancelable = Set<AnyCancellable>()
     
     
     
     ///for testing purpose
-    init(networkClient : NetworkManagerProtocol = NetworkManager.shared ) {
-        self.netwotkManager = networkClient
+    init(fetchMoviesUseCase: FetchMoviesUseCase<AnyPublisher<MovieListResponseModel, MoyaError>>) {
+        self.fetchMovieListUseCase = fetchMoviesUseCase
         self.fetchMovies()
     }
     
@@ -35,15 +36,17 @@ class MovieListViewModel : MovieListViewModelProtocol {
     func fetchMovies() {
         DispatchQueue.global().async { [weak self] in
             guard let  self = self else { return}
-            self.netwotkManager?.fetchMovieList(.movieList , page: nextPage).sink { [weak self] completion in
+                self.fetchMovieListUseCase.execute(input: nextPage , networkManager: NetworkManager.shared).sink { [weak self] completion in
                 switch completion {
                 case .finished:
                     self?.loadingCompleted = true
+                    
                 case .failure(let error):
                     print("error = \(error)")
 
                 }
             } receiveValue: { [weak self] response in
+                print("reponse = \(response)")
                 if response.page < response.totalPages {
                     self?.hasMoreData = true
                     self?.nextPage = response.page + 1

@@ -7,19 +7,23 @@
 
 import Foundation
 import Combine
-class FetchMovieDetails<T> : BaseUseCase {
+import Moya
+class FetchMovieDetailsUseCase<T> : BaseUseCase {
+  
    
- 
     
-    typealias ResponseType = AnyPublisher<MovieModel, Error>
+    typealias ResponseType = AnyPublisher<MovieModel, MoyaError>
     
     typealias InputType = Int
+    typealias NetworkManager = MovieDetailsNetworkManagerProtocol
     
     
-    
-    func execute(input: Int) -> AnyPublisher<MovieModel, any Error> {
-        return NetworkManager.shared.fetchMovieDetails(movieId: input)
+    func execute(input: Int, networkManager: NetworkManager) -> AnyPublisher<MovieModel, MoyaError> {
+        return networkManager.fetchMovieDetails(.movieDetails(id: "\(input)"))
     }
+    
+    
+
     
 
     

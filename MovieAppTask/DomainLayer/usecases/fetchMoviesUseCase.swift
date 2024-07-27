@@ -6,3 +6,24 @@
 //
 
 import Foundation
+import Combine
+import Moya
+
+
+class FetchMoviesUseCase<T> : BaseUseCase {
+   
+    
+    typealias ResponseType = AnyPublisher<MovieListResponseModel, MoyaError>
+    
+    typealias InputType = Int
+    
+    typealias NetworkManager = MovieListNetworkManagerProtocol
+
+    func execute(input: Int, networkManager: NetworkManager) -> AnyPublisher<MovieListResponseModel, MoyaError> {
+        return networkManager.fetchMovieList(.movieList(page: input))
+    }
+  
+    
+
+    
+}

@@ -7,20 +7,20 @@
 
 import Foundation
 import Combine
+import Moya
 
 
-enum ErrorHandler : Error {
-    case badGateWay
-    case someThingWentWrong
-    case invalidResponse
-}
 
-
-protocol NetworkManagerProtocol {
+protocol MovieListNetworkManagerProtocol {
     
-    func fetchMovieList(_ endPoint: MovieAPIs , page: Int ) -> AnyPublisher<MovieListResponseModel, Error>
-    func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieModel , Error>
+    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError>
 }
+protocol MovieDetailsNetworkManagerProtocol {
+    func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel , MoyaError>
+
+}
+
+
 
 class NetworkManager {
     
@@ -31,45 +31,85 @@ class NetworkManager {
     }
         
     private var anyCancellable = Set<AnyCancellable>()
+    private var provider = MoyaProvider<MovieAPIs>()
+
         
 }
 
-extension NetworkManager : NetworkManagerProtocol {
-    func fetchMovieList(_ endPoint: MovieAPIs , page: Int) -> AnyPublisher<MovieListResponseModel, Error> {
-        let url = "\(appConstants.baseURL.rawValue)\(appConstants.movieListEndPoint.rawValue)?api_key=\(appConstants.apiKey.rawValue)"
+extension NetworkManager : MovieListNetworkManagerProtocol {
+    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError> {
 
-        var components = URLComponents(url: URL(string: url)! , resolvingAgainstBaseURL: true)!
-        let queryItems: [URLQueryItem] = [
-            URLQueryItem(name: "page", value: "\(page)"),
-        ]
-        components.queryItems = components.queryItems.map { $0 + queryItems } ?? queryItems
-
-        let request = URLRequest(url: components.url!)
-
-        return URLSession.shared.dataTaskPublisher(for: request)
+    return Future<MovieListResponseModel, MoyaError> { [weak self] promise in
+            
+            guard let self  else { return }
+            
+            self.provider.requestPublisher(endPoint)
             .subscribe(on: DispatchQueue.global(qos: .background))
             .map(\.data)
-            .decode(type: MovieListResponseModel.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
-        
-    
-    }
-    
-    func fetchMovieDetails(movieId: Int) -> AnyPublisher<MovieModel, Error> {
-        let url = "\(appConstants.baseURL.rawValue)\(appConstants.movieDetailsEndPoint.rawValue)\(movieId)?api_key=\(appConstants.apiKey.rawValue)"
-        print("URL = \(url)")
-        var components = URLComponents(url: URL(string: url)! , resolvingAgainstBaseURL: true)!
+            .sink ( receiveCompletion: { completion in
+                    switch completion{
+                    case .finished:
+                        print("Finished")
+                    case .failure(let error):
+                        print("error")
 
-        let request = URLRequest(url: components.url!)
-        
-        return URLSession.shared.dataTaskPublisher(for: request)
-            .subscribe(on: DispatchQueue.global(qos: .background))
-            .map(\.data)
-            .decode(type: MovieModel.self, decoder: JSONDecoder())
-            .receive(on: DispatchQueue.main)
-            .eraseToAnyPublisher()
+                        promise(.failure(error))
+                    }
+                },
+                    receiveValue: { response in
+                    
+                    print("response = \(response)")
+                    guard let result = try? JSONDecoder().decode(MovieListResponseModel.self, from: response)
+                    else {
+//                           promise (.failure(MoyaError.jsonMapping(response)))
+                        return
+                    }
+                    
+                    
+                    promise(.success(result))
+                }
+            ).store(in: &anyCancellable)
+            
+        }.eraseToAnyPublisher()
+
     }
+        
     
-    
+}
+extension NetworkManager : MovieDetailsNetworkManagerProtocol {
+    func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel, MoyaError> {
+        return Future<MovieModel, MoyaError> { [weak self] promise in
+                
+                guard let self  else { return }
+                
+                self.provider.requestPublisher(endPoint)
+                .subscribe(on: DispatchQueue.global(qos: .background))
+                .map(\.data)
+                .sink ( receiveCompletion: { completion in
+                        switch completion{
+                        case .finished:
+                            print("Finished")
+                        case .failure(let error):
+                            print("error")
+
+                            promise(.failure(error))
+                        }
+                    },
+                        receiveValue: { response in
+                        
+                            print("response = \(response)")
+                            guard let result = try? JSONDecoder().decode(MovieModel.self, from: response)
+                            else {
+        //              promise (.failure(MoyaError.jsonMapping(response)))
+                                return
+                            }
+                            
+                            
+                            promise(.success(result))
+                        }
+                ).store(in: &anyCancellable)
+                
+            }.eraseToAnyPublisher()
+
+    }
 }
