@@ -142,14 +142,12 @@ class MovieCell : UITableViewCell {
             
             
             voteLB.bottomAnchor.constraint(equalTo: progressBar.topAnchor, constant: -5),
-//            voteLB.trailingAnchor.constraint(equalTo: progressBar.trailingAnchor, constant: 0),
-//            voteLB.leadingAnchor.constraint(equalTo: progressBar.leadingAnchor, constant: 0),
             voteLB.centerXAnchor.constraint(equalTo: progressBar.centerXAnchor, constant: 0),
 
             progressBar.bottomAnchor.constraint(equalTo: customBackgroundView.bottomAnchor , constant: -15),
             progressBar.trailingAnchor.constraint(equalTo: customBackgroundView.trailingAnchor, constant: -15),
-            progressBar.heightAnchor.constraint(equalToConstant: 40),
-            progressBar.widthAnchor.constraint(equalToConstant: 40),
+            progressBar.heightAnchor.constraint(equalToConstant: 55),
+            progressBar.widthAnchor.constraint(equalToConstant: 55),
            
             
         
@@ -163,12 +161,10 @@ extension MovieCell : MovieCellProtocol{
         guard let movie = movie else {return }
         self.movieNameLB.text = movie.original_title
         self.movieDateLB.text = movie.release_date
-        progressBar.strokeEnd = CGFloat((movie.vote_count ?? Int(0.0)) / 100)
         progressBar.lineWidth = 3
         progressBar.progressLB.text =  "\(movie.vote_count ?? 0)"
         progressBar.progressLB.textColor  =  .white
-        progressBar.progressColor = .green
-        progressBar.trackColor = .white
+        progressBar.progressColor = .white
 
         self.movieImage.kf.setImage(with: URL(string:"\(appConstants.baseURLForImages.rawValue)\(movie.poster_path!)"))
     }

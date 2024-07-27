@@ -19,9 +19,6 @@ class NetworkConnectivity{
     private var monitor: NWPathMonitor?
     private var isMonitoring = false
     
-    var didStartMonitoringHandler: (() -> Void)?
-    var didStopMonitoringHandler: (() -> Void)?
-    var netStatusChangeHandler: (() -> Void)?
     
     var isConnected: Bool {
         guard let monitor = monitor else { return false }
@@ -49,16 +46,14 @@ class NetworkConnectivity{
         let queue = DispatchQueue(label: "Monitor")
         monitor?.start(queue: queue)
         monitor?.pathUpdateHandler = { path in
-            DispatchQueue.main.async {
-                self.netStatusChangeHandler?()
-                
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
                 if path.status == .satisfied {
                     guard let delegate = self.delegate else {
                         return
                     }
                     delegate.networkStatusDidChange(isConnected: true)
-                    // Perform some action when the network returns
-                    // For example, fetch data from a server or update UI
+                
                 } else {
                     guard let delegate = self.delegate else {
                         return
@@ -69,7 +64,6 @@ class NetworkConnectivity{
         }
         
         isMonitoring = true
-        didStartMonitoringHandler?()
     }
 
     func stopMonitoring() {
@@ -77,7 +71,6 @@ class NetworkConnectivity{
             monitor.cancel()
             self.monitor = nil
             isMonitoring = false
-            didStopMonitoringHandler?()
         }
     }
     

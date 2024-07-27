@@ -11,74 +11,51 @@ import SwiftMessages
 
 
 class Alert{
-    static var disconnectedConfig = SwiftMessages.Config()
-    static var connectedConfig = SwiftMessages.Config()
-    static var successConfig = SwiftMessages.Config()
-    static var warningConfig = SwiftMessages.Config()
-    static var successView = MessageView()
-    static var warningView = MessageView()
-    static var disconnectedView = MessageView()
-    static var connectedView = MessageView()
+    private var disconnectedConfig = SwiftMessages.Config()
+    private var disconnectedView = MessageView()
     
-    static var retryImplemenation : (() -> ()) = { }
-    static var retryNoNetworkAlert : (() -> ()) = { }
+    private var connectedConfig = SwiftMessages.Config()
+    private var connectedView = MessageView()
+    
+    private var config = SwiftMessages.Config()
+    private var errorView = MessageView()
+    
+    private var retryNoNetworkAlert : (() -> ()) = { }
     
     
-    @MainActor static func initiateSwiftMessagesViews() {
-        Alert.setupDisconnectedView()
-        Alert.setupConnectedView()
-        Alert.setupWarningView()
+    private static var instance = Alert()
+    
+    public  static var shared : Alert {
+        return instance
     }
     
-  
-    @objc func onTapSetting(){
-        DispatchQueue.main.async {
-            
-                NSLog("setting")
-                    UIApplication.shared.open(URL(string:UIApplication.openSettingsURLString)!)
-        }
+    @MainActor  func initiateSwiftMessagesViews() {
+        setupDisconnectedView()
+        setupConnectedView()
+        setupErrorView()
     }
-
-
-    @MainActor static func setupSuccessView(){
-        successView = MessageView.viewFromNib(layout: .messageView)
-        successView.configureTheme(.success, iconStyle: .subtle)
-        successView.backgroundView.backgroundColor = #colorLiteral(red: 0.1647058824, green: 0.7098039216, blue: 0, alpha: 1)
+    
+    
+    @MainActor  func setupErrorView() {
+        errorView = MessageView.viewFromNib(layout: .messageView)
+        errorView.configureTheme(.error , iconStyle: .subtle)
         
-        
-        successView.configureDropShadow()
-        successView.layoutMarginAdditions = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
-        (successView.backgroundView as? CornerRoundingView)?.cornerRadius = 10
-        successView.button?.isHidden = true
-
-        successConfig = SwiftMessages.defaultConfig
-        successConfig.duration = .automatic
-        successConfig.ignoreDuplicates = true
-        successConfig.presentationContext = .window(windowLevel: .normal)
-        successView.button?.addTarget(self, action: #selector(hideErrorAlert), for: .touchUpInside)
-    }
-    
-    @MainActor static func setupWarningView() {
-        warningView = MessageView.viewFromNib(layout: .messageView)
-        warningView.configureTheme(.warning, iconStyle: .subtle)
-
         // Add a drop shadow.
-        warningView.configureDropShadow()
-        warningView.layoutMarginAdditions = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
-        (warningView.backgroundView as? CornerRoundingView)?.cornerRadius = 10
-        warningView.button?.isHidden = true
-        warningView.titleLabel?.textColor = .black
-        warningView.bodyLabel?.textColor = .black
-        warningConfig = SwiftMessages.defaultConfig
-        warningConfig.duration = .automatic
-        warningConfig.ignoreDuplicates = true
-        warningConfig.presentationContext = .window(windowLevel: .normal)
-        successView.button?.addTarget(self, action: #selector(hideErrorAlert), for: .touchUpInside)
+        errorView.configureDropShadow()
+        errorView.button?.isHidden = true
+        
+        errorView.layoutMarginAdditions = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        (errorView.backgroundView as? CornerRoundingView)?.cornerRadius = 10
+        config = SwiftMessages.defaultConfig
+        config.duration = .automatic
+        
+        config.ignoreDuplicates = true
+        config.presentationContext = .window(windowLevel: .normal)
+        errorView.button?.addTarget(self, action: #selector(hideErrorAlert), for: .touchUpInside)
     }
     
-
-    @MainActor static func setupDisconnectedView() {
- 
+    @MainActor  func setupDisconnectedView() {
+        
         disconnectedView = MessageView.viewFromNib(layout: .statusLine)
         disconnectedView.configureTheme(.error)
         disconnectedConfig = SwiftMessages.defaultConfig
@@ -86,51 +63,57 @@ class Alert{
         disconnectedConfig.ignoreDuplicates = true
         disconnectedConfig.interactiveHide = false
     }
-
-    static func showDisconnectedMessage() {
-        DispatchQueue.main.async {
-            disconnectedView.configureContent(body: "NoInternet")
-            SwiftMessages.show(config: disconnectedConfig, view: disconnectedView)
-        }
-    }
-    static func hideDisconnectedMessage() {
-        DispatchQueue.main.async {
-            SwiftMessages.hide()
-        }
-    }
-    @MainActor static func setupConnectedView() {
+    
+    @MainActor  func setupConnectedView() {
         connectedView = MessageView.viewFromNib(layout: .statusLine)
         connectedView.configureTheme(.success)
         connectedConfig = SwiftMessages.defaultConfig
-        connectedConfig.duration = .seconds(seconds: 20)
+        connectedConfig.duration = .seconds(seconds: 1)
         connectedConfig.ignoreDuplicates = true
     }
-    static func showConnectedMessage() {
-        DispatchQueue.main.async {
-            connectedView.configureContent(body: "NetworkConnected")
-            SwiftMessages.show(config: connectedConfig, view: connectedView)
+    
+    func showDisconnectedMessage() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return }
+            self.disconnectedView.configureContent(body: "No Internet")
+            SwiftMessages.show(config: self.disconnectedConfig, view: self.disconnectedView)
         }
     }
-    static func hideConnectedMessage() {
-        DispatchQueue.main.async {
-            SwiftMessages.hide()
+    
+    func showConnectedMessage() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return }
+            self.connectedView.configureContent(body: "Network Connected")
+            SwiftMessages.show(config: self.connectedConfig, view: self.connectedView)
         }
     }
     
     
-    @objc static func retryActionAlert() {
-        DispatchQueue.main.async {
-            SwiftMessages.hide()
-            Alert.retryImplemenation()
-        }
-    }
-  
     
-    @objc static func hideErrorAlert() {
-        DispatchQueue.main.async {
+    func showErrorMessage(title: String = "Error", body: String){
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            self.errorView.configureContent(title: title, body: body,iconImage:
+                                                UIImage(systemName: "exclamationmark.triangle.fill")!)
+            SwiftMessages.show(config: self.config, view: self.errorView)
+        }
+    }
+    
+    @objc  func retryActionAlert() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return }
+            SwiftMessages.hide()
+            self.retryActionAlert()
+        }
+    }
+    
+    
+    @objc  func hideErrorAlert() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else {return }
             SwiftMessages.hide()
         }
     }
- 
+    
 }
 

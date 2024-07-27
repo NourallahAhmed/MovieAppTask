@@ -14,14 +14,16 @@ class BaseViewController : UIViewController  , NetworkReachabilityDelegate{
         super.viewDidLoad()
         view.backgroundColor = .black
         NetworkConnectivity.shared.delegate = self
+       
 
     }
     
     func networkStatusDidChange(isConnected: Bool) {
-        if isConnected {
-            Alert.hideDisconnectedMessage()
+        if isConnected  {
+            Alert.shared.showConnectedMessage()
+    
         }else{
-            Alert.showDisconnectedMessage()
+            Alert.shared.showDisconnectedMessage()
         }
     }
 }

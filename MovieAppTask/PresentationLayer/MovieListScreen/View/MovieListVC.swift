@@ -13,7 +13,8 @@ import Moya
 import SkeletonView
 
 class MovieListVC : BaseViewController {
-    
+    private var spinner = UIActivityIndicatorView(style: .large)
+
     private lazy var movieTV : UITableView  = {
         
         let table = UITableView()
@@ -47,11 +48,20 @@ class MovieListVC : BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
-        setUpTableView()
+        setUpView()
         
-
+        subscribeToError()
         subscribeToLoading()
         
+    }
+    
+    func subscribeToError(){
+        vm.$error.receive(on: DispatchQueue.main)
+            .sink { error in
+                if !error.isEmpty {
+                    Alert.shared.showErrorMessage(title: "Error", body: error)
+                }
+            }.store(in: &cancelable)
     }
     
     func subscribeToLoading(){
@@ -59,30 +69,38 @@ class MovieListVC : BaseViewController {
         vm.$loadingCompleted
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self] completed in
+                print("completed == \(completed)")
             if completed {
                 self?.updateUI()
             }else{
-//                self?.movieTV.showAnimatedGradientSkeleton()
+                self?.spinner.startAnimating()
 
             }
             }).store(in: &cancelable)
     }
     
     func updateUI() {
-//            self.movieTV.hideSkeleton()
-            self.movieTV.reloadData()
+        self.spinner.stopAnimating()
+        self.movieTV.reloadData()
 
         
     }
     
-    func setUpTableView(){
+    func setUpView(){
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.color = .orange
         view.addSubview(movieTV)
+        view.addSubview(spinner)
+
         
         NSLayoutConstraint.activate([
             movieTV.topAnchor.constraint(equalTo: view.topAnchor),
             movieTV.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             movieTV.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             movieTV.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+            
         ])
                
     }
