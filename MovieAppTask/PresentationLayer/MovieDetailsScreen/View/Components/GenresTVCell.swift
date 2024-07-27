@@ -10,7 +10,7 @@ import UIKit
 
 
 
-class GenresCollectionCell: UICollectionViewCell {
+class GenresTVCell: UITableViewCell {
     
     private  var dataLB : UILabel = {
             let label = UILabel()
@@ -18,14 +18,15 @@ class GenresCollectionCell: UICollectionViewCell {
             label.font = UIFont.boldSystemFont(ofSize: 12)
             label.numberOfLines = 3
             label.textAlignment = .natural
-            label.textColor = .black
+            label.textColor = .white
             label.text = "Family"
 
             return label
         }()
             
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
         self.isUserInteractionEnabled = true
         self.backgroundColor = .gray.withAlphaComponent(0.6)
         self.layer.cornerRadius = 12
@@ -40,6 +41,11 @@ class GenresCollectionCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
   
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10))
+    }
     func configure(text: String){
         self.dataLB.text = text
    

@@ -6,11 +6,10 @@ target 'MovieAppTask' do
   use_frameworks!
 
    pod 'Moya', '~> 15.0'
-
    pod 'Moya/Combine', '~> 15.0'
    pod 'Kingfisher', '~> 7.0'
    pod 'SwiftMessages'
-
+   pod 'SkeletonView'
 
   # Pods for MovieAppTask
 

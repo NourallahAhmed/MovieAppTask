@@ -7,6 +7,7 @@ PODS:
     - Moya/Core
   - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
+  - SkeletonView (1.30.4)
   - SwiftMessages (10.0.0):
     - SwiftMessages/App (= 10.0.0)
   - SwiftMessages/App (10.0.0)
@@ -15,6 +16,7 @@ DEPENDENCIES:
   - Kingfisher (~> 7.0)
   - Moya (~> 15.0)
   - Moya/Combine (~> 15.0)
+  - SkeletonView
   - SwiftMessages
 
 SPEC REPOS:
@@ -22,14 +24,16 @@ SPEC REPOS:
     - Alamofire
     - Kingfisher
     - Moya
+    - SkeletonView
     - SwiftMessages
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
   Kingfisher: 53a10ea35051a436b5fb626ca2dd8f3144d755e9
   Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
+  SkeletonView: 5a050f6411e697abd4cda0a8d767013399dccd69
   SwiftMessages: d3540f0f981dfbac25bd2ae9a662effa48f76f92
 
-PODFILE CHECKSUM: 2ef67e7277beaf4c8e77029bd53ffb97107e69f5
+PODFILE CHECKSUM: d54ecba97171721c62189ff73c908e37b40865df
 
 COCOAPODS: 1.15.2

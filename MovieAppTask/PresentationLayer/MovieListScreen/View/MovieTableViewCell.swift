@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 import Kingfisher
-
+import SkeletonView
 
 
 protocol MovieCellProtocol {
@@ -20,12 +20,10 @@ class MovieCell : UITableViewCell {
     private let movieImage : UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "tv"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
-
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 20
-
         imageView.clipsToBounds = true
-        
+        imageView.isSkeletonable = true
         return imageView
         
     }()
@@ -37,8 +35,10 @@ class MovieCell : UITableViewCell {
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
-        label.textColor = .black
-        label.text = "TestMovieTestMovieTestMovieTestMovieTestMovieTestMovie"
+        label.textColor = .white
+        label.isSkeletonable = true
+        label.skeletonLineSpacing = 2
+        label.text = "####################"
         return label
     }()
     
@@ -46,11 +46,12 @@ class MovieCell : UITableViewCell {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.translatesAutoresizingMaskIntoConstraints = false
-
         label.numberOfLines = 0
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
-        label.textColor = .black
+        label.textColor = .white
+        label.isSkeletonable = true
+        label.skeletonLineSpacing = 1
         label.text = "1988"
         return label
     }()
@@ -60,24 +61,29 @@ class MovieCell : UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 25
         view.clipsToBounds = true
+        view.isSkeletonable = true
         view.backgroundColor = .lightGray.withAlphaComponent(0.8)
         return view
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-
+        backgroundColor = .black
+        contentView.isSkeletonable = true
+        backgroundView?.isSkeletonable = true
         setUpView()
+
     }
-    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+    }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     
     func setUpView(){
-        addSubview(customBackgroundView)
+        contentView.addSubview(customBackgroundView)
 
         customBackgroundView.addSubview(movieImage)
         customBackgroundView.addSubview(movieNameLB)
@@ -112,6 +118,7 @@ class MovieCell : UITableViewCell {
 
 extension MovieCell : MovieCellProtocol{
     func configureMovie(movie: MovieModel?) {
+        self.contentView.hideSkeleton()
         guard let movie = movie else {return }
         self.movieNameLB.text = movie.original_title
         self.movieDateLB.text = movie.release_date

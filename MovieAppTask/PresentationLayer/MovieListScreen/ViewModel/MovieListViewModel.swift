@@ -41,6 +41,7 @@ class MovieListViewModel : MovieListViewModelProtocol {
                 case .finished:
                     self?.loadingCompleted = true
                     
+                    
                 case .failure(let error):
                     print("error = \(error)")
 

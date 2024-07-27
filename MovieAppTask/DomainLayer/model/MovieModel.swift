@@ -20,6 +20,8 @@ struct MovieModel : Codable {
     let title : String?
     let video : Bool?
     let vote_average : Double?
+    let budget : Int?
+    let revenue : Int?
     let vote_count : Int?
 
     enum CodingKeys: String, CodingKey {
@@ -38,6 +40,8 @@ struct MovieModel : Codable {
         case video = "video"
         case vote_average = "vote_average"
         case vote_count = "vote_count"
+        case budget = "budget"
+        case revenue = "revenue"
     }
 
     init(from decoder: Decoder) throws {
@@ -56,6 +60,8 @@ struct MovieModel : Codable {
         video = try values.decodeIfPresent(Bool.self, forKey: .video)
         vote_average = try values.decodeIfPresent(Double.self, forKey: .vote_average)
         vote_count = try values.decodeIfPresent(Int.self, forKey: .vote_count)
+        budget = try values.decodeIfPresent(Int.self, forKey: .budget)
+        revenue = try values.decodeIfPresent(Int.self, forKey: .revenue)
     }
 
 }

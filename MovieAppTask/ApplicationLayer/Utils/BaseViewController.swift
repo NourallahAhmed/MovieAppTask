@@ -12,6 +12,7 @@ class BaseViewController : UIViewController  , NetworkReachabilityDelegate{
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .black
         NetworkConnectivity.shared.delegate = self
 
     }
