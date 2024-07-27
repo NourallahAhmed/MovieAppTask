@@ -50,6 +50,7 @@ class MovieListVC : BaseViewController {
         
         subscribeToError()
         subscribeToLoading()
+
         
     }
     
@@ -112,7 +113,13 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print("Count \(vm.movieList.count)")
+        
+        if vm.movieList.count == 0 {
+            tableView.backgroundView = CustomEmptyView(image: "no data" , isImage: false, titleText: "Sorry No Data Available")
+        }else{
+            tableView.backgroundView = nil
+        }
+        
         return vm.movieList.count
     }
     

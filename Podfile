@@ -10,6 +10,8 @@ target 'MovieAppTask' do
    pod 'Kingfisher', '~> 7.0'
    pod 'SwiftMessages'
    pod 'SkeletonView'
+   pod 'lottie-ios'
+
 
   # Pods for MovieAppTask
 
