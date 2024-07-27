@@ -25,6 +25,7 @@ public class CircleProgress: UIView {
         label.font = UIFont.systemFont(ofSize: 12)
         label.numberOfLines = 3
         label.textAlignment = .natural
+        label.adjustsFontSizeToFitWidth = true
         label.textColor = .black
         label.text = "10"
 

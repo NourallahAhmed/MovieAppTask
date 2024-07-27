@@ -21,7 +21,7 @@ class MovieCell : UITableViewCell {
         let imageView = UIImageView(image: UIImage(named: "tv"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 20
+        imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
         imageView.isSkeletonable = true
         return imageView
@@ -54,6 +54,21 @@ class MovieCell : UITableViewCell {
         label.skeletonLineSpacing = 1
         label.text = "1988"
         return label
+    }()  
+    
+    
+    private let voteLB : UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 0
+        label.adjustsFontSizeToFitWidth = true
+        label.textAlignment = .natural
+        label.textColor = .white
+        label.isSkeletonable = true
+        label.skeletonLineSpacing = 1
+        label.text = "Vote"
+        return label
     }()
     
     private let customBackgroundView : UIView = {
@@ -66,6 +81,17 @@ class MovieCell : UITableViewCell {
         return view
     }()
     
+    private lazy var progressBar: CircleProgress = {
+        let progress = CircleProgress()
+        progress.lineWidth = 3
+        progress.trackColor = .lightGray.withAlphaComponent(0.2)
+        progress.progressColor = .green
+        progress.strokeEnd  = 60
+        progress.inset = 3
+        progress.translatesAutoresizingMaskIntoConstraints = false
+        return progress
+    }()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .black
@@ -88,6 +114,8 @@ class MovieCell : UITableViewCell {
         customBackgroundView.addSubview(movieImage)
         customBackgroundView.addSubview(movieNameLB)
         customBackgroundView.addSubview(movieDateLB)
+        customBackgroundView.addSubview(voteLB)
+        customBackgroundView.addSubview(progressBar)
        
         NSLayoutConstraint.activate([
             
@@ -97,9 +125,9 @@ class MovieCell : UITableViewCell {
             customBackgroundView.bottomAnchor.constraint(equalTo: bottomAnchor , constant:  -16),
             
             
-            movieImage.topAnchor.constraint(equalTo: customBackgroundView.topAnchor, constant: 8),
-            movieImage.leadingAnchor.constraint(equalTo: customBackgroundView.leadingAnchor, constant: 16),
-            movieImage.bottomAnchor.constraint(equalTo: customBackgroundView.bottomAnchor, constant: -16),
+            movieImage.topAnchor.constraint(equalTo: customBackgroundView.topAnchor, constant: 0),
+            movieImage.leadingAnchor.constraint(equalTo: customBackgroundView.leadingAnchor, constant: -10),
+            movieImage.bottomAnchor.constraint(equalTo: customBackgroundView.bottomAnchor, constant: 0),
             movieImage.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width / 3),
             
             movieNameLB.topAnchor.constraint(equalTo: customBackgroundView.topAnchor, constant: 16),
@@ -111,6 +139,19 @@ class MovieCell : UITableViewCell {
             movieDateLB.topAnchor.constraint(equalTo: movieNameLB.bottomAnchor, constant: 8),
             movieDateLB.leadingAnchor.constraint(equalTo: movieImage.trailingAnchor,constant: 16),
             movieDateLB.heightAnchor.constraint(equalToConstant: 20),
+            
+            
+            voteLB.bottomAnchor.constraint(equalTo: progressBar.topAnchor, constant: -5),
+//            voteLB.trailingAnchor.constraint(equalTo: progressBar.trailingAnchor, constant: 0),
+//            voteLB.leadingAnchor.constraint(equalTo: progressBar.leadingAnchor, constant: 0),
+            voteLB.centerXAnchor.constraint(equalTo: progressBar.centerXAnchor, constant: 0),
+
+            progressBar.bottomAnchor.constraint(equalTo: customBackgroundView.bottomAnchor , constant: -15),
+            progressBar.trailingAnchor.constraint(equalTo: customBackgroundView.trailingAnchor, constant: -15),
+            progressBar.heightAnchor.constraint(equalToConstant: 40),
+            progressBar.widthAnchor.constraint(equalToConstant: 40),
+           
+            
         
         ])
     }
@@ -122,6 +163,13 @@ extension MovieCell : MovieCellProtocol{
         guard let movie = movie else {return }
         self.movieNameLB.text = movie.original_title
         self.movieDateLB.text = movie.release_date
+        progressBar.strokeEnd = CGFloat((movie.vote_count ?? Int(0.0)) / 100)
+        progressBar.lineWidth = 3
+        progressBar.progressLB.text =  "\(movie.vote_count ?? 0)"
+        progressBar.progressLB.textColor  =  .white
+        progressBar.progressColor = .green
+        progressBar.trackColor = .white
+
         self.movieImage.kf.setImage(with: URL(string:"\(appConstants.baseURLForImages.rawValue)\(movie.poster_path!)"))
     }
 }
