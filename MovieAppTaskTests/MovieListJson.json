@@ -1,0 +1,49 @@
+
+{
+    "page": 1,
+    "results": [
+        {
+            "adult": false,
+            "backdrop_path": "/stKGOm8UyhuLPR9sZLjs5AkmncA.jpg",
+            "genre_ids": [
+                16,
+                10751,
+                12,
+                35
+            ],
+            "id": 1022789,
+            "original_language": "en",
+            "original_title": "Inside Out 2",
+            "overview": "Teenager Riley's mind headquarters is undergoing a sudden demolition to make room for something entirely unexpected: new Emotions! Joy, Sadness, Anger, Fear and Disgust, who’ve long been running a successful operation by all accounts, aren’t sure how to feel when Anxiety shows up. And it looks like she’s not alone.",
+            "popularity": 4433.962,
+            "poster_path": "/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg",
+            "release_date": "2024-06-11",
+            "title": "Inside Out 2",
+            "video": false,
+            "vote_average": 7.63,
+            "vote_count": 2096
+        },
+        {
+            "adult": false,
+            "backdrop_path": "/9l1eZiJHmhr5jIlthMdJN5WYoff.jpg",
+            "genre_ids": [
+                878,
+                28,
+                35
+            ],
+            "id": 533535,
+            "original_language": "en",
+            "original_title": "Deadpool & Wolverine",
+            "overview": "A listless Wade Wilson toils away in civilian life with his days as the morally flexible mercenary, Deadpool, behind him. But when his homeworld faces an existential threat, Wade must reluctantly suit-up again with an even more reluctant Wolverine.",
+            "popularity": 4270.83,
+            "poster_path": "/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",
+            "release_date": "2024-07-24",
+            "title": "Deadpool & Wolverine",
+            "video": false,
+            "vote_average": 8.141,
+            "vote_count": 479
+        }
+    ],
+    "total_pages": 45295,
+    "total_results": 905900
+}

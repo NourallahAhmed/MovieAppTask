@@ -16,14 +16,13 @@ protocol MovieListViewModelProtocol {
 
 class MovieListViewModel : MovieListViewModelProtocol {
     
-    @Published private(set) var movieList : [MovieModel]  = [MovieModel]()
+    @Published internal var movieList : [MovieModel]  = [MovieModel]()
     @Published private(set) var loadingCompleted   = false
     @Published private(set) var error   = ""
     @Published private(set) var hasMoreData   = false
     private var nextPage = 1
-    private var fetchMovieListUseCase : FetchMoviesUseCase<AnyPublisher<MovieListResponseModel, MoyaError>>
-
-    private var anyCancelable = Set<AnyCancellable>()
+    internal var fetchMovieListUseCase : FetchMoviesUseCase<AnyPublisher<MovieListResponseModel, MoyaError>>
+    internal var anyCancelable = Set<AnyCancellable>()
     
     
     

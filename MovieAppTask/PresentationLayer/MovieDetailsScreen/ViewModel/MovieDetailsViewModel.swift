@@ -13,12 +13,12 @@ protocol MovieDetailsProtocol {
     func getMovieDetails(id: Int)
 }
 class MovieDetailsViewModel  : MovieDetailsProtocol {
-    @Published private(set) var movie : MovieModel?
+    @Published internal var movie : MovieModel?
     @Published private(set) var isLoadingCompleted : Bool = false
     
     private var movieID : Int
-    private var fetchMovieDetailsUseCase : FetchMovieDetailsUseCase<AnyPublisher<MovieModel, Error>> 
-    private var anyCancelable = Set<AnyCancellable>()
+    internal var fetchMovieDetailsUseCase : FetchMovieDetailsUseCase<AnyPublisher<MovieModel, Error>>
+    internal var anyCancelable = Set<AnyCancellable>()
     
     init(movie: MovieModel? = nil, movieID: Int , fetchMovieUseCase : FetchMovieDetailsUseCase<AnyPublisher<MovieModel, Error>>) {
         self.movie = movie

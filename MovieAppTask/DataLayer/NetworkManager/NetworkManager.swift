@@ -12,10 +12,10 @@ import Moya
 
 protocol MovieListNetworkManagerProtocol {
     
-    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError>
+      func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError>
 }
 protocol MovieDetailsNetworkManagerProtocol {
-    func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel , MoyaError>
+     func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel , MoyaError>
 
 }
 
@@ -23,20 +23,21 @@ protocol MovieDetailsNetworkManagerProtocol {
 
 class NetworkManager {
     
-    private static var instance = NetworkManager()
+    private static var instance = NetworkManager(provider: MoyaProvider<MovieAPIs>())
     
     public  static var shared : NetworkManager {
         return instance
     }
-        
     private var anyCancellable = Set<AnyCancellable>()
-    private var provider = MoyaProvider<MovieAPIs>()
-
+    private var provider  : MoyaProvider<MovieAPIs>
+    init( provider: MoyaProvider<MovieAPIs>) {
+        self.provider = provider
+    }
         
 }
 
 extension NetworkManager : MovieListNetworkManagerProtocol {
-    func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError> {
+    open func fetchMovieList(_ endPoint: MovieAPIs) -> AnyPublisher<MovieListResponseModel, MoyaError> {
 
     return Future<MovieListResponseModel, MoyaError> { [weak self] promise in
             
@@ -74,7 +75,7 @@ extension NetworkManager : MovieListNetworkManagerProtocol {
     
 }
 extension NetworkManager : MovieDetailsNetworkManagerProtocol {
-    func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel, MoyaError> {
+     open func fetchMovieDetails(_ endPoint: MovieAPIs) -> AnyPublisher<MovieModel, MoyaError> {
         return Future<MovieModel, MoyaError> { [weak self] promise in
                 
                 guard let self  else { return }

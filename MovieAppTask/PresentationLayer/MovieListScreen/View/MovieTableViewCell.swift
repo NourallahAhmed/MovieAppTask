@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import Kingfisher
-import SkeletonView
 
 
 protocol MovieCellProtocol {
@@ -23,7 +22,6 @@ class MovieCell : UITableViewCell {
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 5
         imageView.clipsToBounds = true
-        imageView.isSkeletonable = true
         return imageView
         
     }()
@@ -36,8 +34,6 @@ class MovieCell : UITableViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
         label.textColor = .white
-        label.isSkeletonable = true
-        label.skeletonLineSpacing = 2
         label.text = "####################"
         return label
     }()
@@ -50,8 +46,6 @@ class MovieCell : UITableViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
         label.textColor = .white
-        label.isSkeletonable = true
-        label.skeletonLineSpacing = 1
         label.text = "1988"
         return label
     }()  
@@ -65,8 +59,6 @@ class MovieCell : UITableViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.textAlignment = .natural
         label.textColor = .white
-        label.isSkeletonable = true
-        label.skeletonLineSpacing = 1
         label.text = "Vote"
         return label
     }()
@@ -76,7 +68,6 @@ class MovieCell : UITableViewCell {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.cornerRadius = 25
         view.clipsToBounds = true
-        view.isSkeletonable = true
         view.backgroundColor = .lightGray.withAlphaComponent(0.8)
         return view
     }()
@@ -95,8 +86,6 @@ class MovieCell : UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         backgroundColor = .black
-        contentView.isSkeletonable = true
-        backgroundView?.isSkeletonable = true
         setUpView()
 
     }
@@ -157,7 +146,6 @@ class MovieCell : UITableViewCell {
 
 extension MovieCell : MovieCellProtocol{
     func configureMovie(movie: MovieModel?) {
-        self.contentView.hideSkeleton()
         guard let movie = movie else {return }
         self.movieNameLB.text = movie.original_title
         self.movieDateLB.text = movie.release_date

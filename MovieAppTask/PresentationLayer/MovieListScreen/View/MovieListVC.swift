@@ -10,7 +10,6 @@ import UIKit
 import SwiftUI
 import Combine
 import Moya
-import SkeletonView
 
 class MovieListVC : BaseViewController {
     private var spinner = UIActivityIndicatorView(style: .large)
@@ -25,7 +24,6 @@ class MovieListVC : BaseViewController {
         table.delegate = self
         table.dataSource = self
         table.backgroundColor = .black
-        table.isSkeletonable = true
         // configure the cell
         table.register( MovieCell.self , forCellReuseIdentifier: appConstants.movieListCellIdentifier.rawValue)
         return table
@@ -147,30 +145,7 @@ extension MovieListVC : UITableViewDelegate , UITableViewDataSource {
  
     
 }
-//
-//extension MovieListVC : SkeletonTableViewDataSource {
-//    // skeleton view method
-//    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
-//        return appConstants.movieListCellIdentifier.rawValue
-//    }
-//    func numberOfSections(in tableView: UITableView) -> Int {
-//        return 0
-//    }
-//    
-//    func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        10
-//    }
-//
-//    func collectionSkeletonView(_ skeletonView: UITableView, skeletonCellForRowAt indexPath: IndexPath) -> UITableViewCell? {
-//        guard let cell = skeletonView.dequeueReusableCell(withIdentifier: appConstants.movieListCellIdentifier.rawValue, for: indexPath) as? MovieCell else {
-//            return UITableViewCell()
-//
-//        }
-//        cell.isSkeletonable = true
-//        cell.showSkeleton()
-//        return cell
-//    }
-//}
+
 struct MovieListRepresenter : UIViewControllerRepresentable {
     typealias UIViewControllerType = MovieListVC
 
