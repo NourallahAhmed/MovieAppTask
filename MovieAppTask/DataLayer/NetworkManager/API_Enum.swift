@@ -13,9 +13,6 @@ enum MovieAPIs{
     case movieDetails(id: String)
 }
 
-class test {
-    
-}
 extension  MovieAPIs : Moya.TargetType{
     var baseURL: URL {
         
